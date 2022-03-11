@@ -13,7 +13,9 @@ const Genre = require("../models").genre;
 //GET POST INCLUDING USER DATA
 router.get("/posts", async (req, res, next) => {
   try {
-    const posts = await Post.findAll();
+    const posts = await Post.findAll({
+      include: Like,
+    });
     if (posts) {
       res.send(posts);
     } else {
@@ -28,7 +30,9 @@ router.get("/posts", async (req, res, next) => {
 router.get("/post/:id", async (req, res) => {
   const { id } = req.params;
   // find the post
-  const onePost = await Post.findByPk(id);
+  const onePost = await Post.findByPk(id, {
+    include: [Like, Comment],
+  });
   if (!onePost) {
     return res.status(404).send("Post not found");
   }
@@ -109,7 +113,12 @@ router.post("/comment", authMiddleware, async (req, res) => {
     }
 
     // Go to DB and create new comment with params
-    const newComment = await Comment.create({ comment, userId, postId });
+    const newComment = await Comment.create({
+      comment,
+      userId,
+      postId,
+      userName: oneUser.userName,
+    });
     // Send new user back
     res.send(newComment);
   } catch (e) {

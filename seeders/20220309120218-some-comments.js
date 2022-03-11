@@ -10,7 +10,7 @@ module.exports = {
         {
           comment: "This is my MemeOne comment",
           userId: 1,
-          postId: 2,
+          postId: 1,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
