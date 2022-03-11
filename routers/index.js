@@ -69,7 +69,7 @@ router.get("/post/:id/likes", async (req, res) => {
     }
     return res.send(likes);
   } catch (error) {
-    next(error);
+    console.log(error, "error");
   }
 });
 
