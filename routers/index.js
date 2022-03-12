@@ -14,7 +14,8 @@ const Genre = require("../models").genre;
 router.get("/posts", async (req, res, next) => {
   try {
     const posts = await Post.findAll({
-      include: Like,
+      include: [Like, Genre],
+      order: [["createdAt", "DESC"]],
     });
     if (posts) {
       res.send(posts);
@@ -44,6 +45,7 @@ router.get("/post/:id/comments", async (req, res) => {
   const { id } = req.params;
   const comments = await Comment.findAll({
     where: { postId: id },
+    order: [["createdAt", "DESC"]],
   });
   if (comments === null) {
     return res.status(404).send(`Posts not found`);
@@ -61,19 +63,39 @@ router.get("/genres", async (req, res) => {
   return res.send(genres);
 });
 
-//GET LIKES
-router.get("/post/:id/likes", async (req, res) => {
+//POST LIKES
+router.post("/post/:postId/like", authMiddleware, async (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const { postId } = req.params;
+  const { userId } = toData(authHeader.replace("Bearer ", ""));
+
+  if (!userId || !postId) {
+    return res.status(404).send("Request not authorized.");
+  }
+
   try {
-    const { id } = req.params;
-    const likes = await Like.findAll({
-      where: { postId: id },
-    });
-    if (likes === null) {
-      return res.status(404).send("Likes not found");
+    const oneUser = await User.findByPk(userId);
+
+    if (!oneUser) {
+      return res.status(404).send("User not found");
     }
-    return res.send(likes);
+
+    const like = await Like.create({
+      userId: oneUser.id,
+      postId: postId,
+    });
+
+    if (like === null) {
+      return res.status(404).send("Request failed, could not like post.");
+    }
+
+    return res.send({
+      success: true,
+      like,
+    });
   } catch (error) {
     console.log(error, "error");
+    return res.status(404).send("Request failed. " + e.message);
   }
 });
 
@@ -117,7 +139,7 @@ router.post("/comment", authMiddleware, async (req, res) => {
       comment,
       userId,
       postId,
-      userName: oneUser.userName,
+      userName: oneUser.name,
     });
     // Send new user back
     res.send(newComment);
