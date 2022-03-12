@@ -3,9 +3,16 @@ GET http://localhost:4000/post/3
 
 ###
 GET http://localhost:4000/posts
+
+###
+GET http://localhost:4000/genres
+
+###
+GET http://localhost:4000/post/2/likes
+
 ###
 POST http://localhost:4000/comment
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE2NDY4NDkxMDksImV4cCI6MTY0Njg1NjMwOX0.QTvECHb_bigQkkelWkryZw38GBOvTdXwgT4b4gLPHbM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE2NDY5MTA1MTIsImV4cCI6MTY0NjkxNzcxMn0.RzFuk-83kKOj55-AJTqYykY3O4I5jzIwKv3BiEIwYc4
 Content-Type: application/json
 
 { 
@@ -14,4 +21,16 @@ Content-Type: application/json
 }
 
 ###
+POST http://localhost:4000/meme
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE2NDY5MTk1MzgsImV4cCI6MTY0NjkyNjczOH0.iY6qSfyQU561ySvNQ-BnIbNP-02VFk_g_SxSkiaaaG8
+Content-Type: application/json
+
+{ 
+    "title": "this is the title from the call",
+    "imageUrl": "this is a new comment",
+    "genreId": 1
+}
+
+###
 GET http://localhost:4000/post/2/comments
+
