@@ -148,6 +148,31 @@ router.post("/comment", authMiddleware, async (req, res) => {
   }
 });
 
+//DELETE ONE POST AS AN ADMIN
+router.delete("/delete/:id", authMiddleware, async (req, res, next) => {
+  const { id } = req.params;
+  const authHeader = req.headers["authorization"];
+  const { userId } = toData(authHeader.replace("Bearer ", ""));
+
+  try {
+    const oneUser = await User.findByPk(userId);
+
+    if (!oneUser || !oneUser.isAdmin) {
+      return res.status(404).send("User not found");
+    }
+
+    const post = await Post.findByPk(id);
+    if (!post) {
+      return res.status(404).send("Post not found");
+    }
+
+    await post.destroy();
+    return res.send({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get("/me", authMiddleware, async (req, res) => {
   // don't send back the password hash
   delete req.user.dataValues["password"];
